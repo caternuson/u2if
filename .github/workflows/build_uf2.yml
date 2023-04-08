@@ -21,3 +21,7 @@ jobs:
           cd build
           cmake ..
           make
+      - uses: actions/upload-artifact@v3
+        with:
+          name: uf2
+          path: u2if.uf2
