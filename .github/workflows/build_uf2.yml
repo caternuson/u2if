@@ -24,4 +24,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           name: uf2
-          path: u2if.uf2
+          path: firmware/source/build/u2if.uf2
