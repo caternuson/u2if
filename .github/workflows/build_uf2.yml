@@ -26,6 +26,7 @@ jobs:
           cmake -DBOARD=QTPY .. ; make ; mv u2if.uf2 u2if_qtpy.uf2
           cmake -DBOARD=ITSYBITSY .. ; make ; mv u2if.uf2 u2if_itsybitsy.uf2
           cmake -DBOARD=QT2040_TRINKEY .. ; make ; mv u2if.uf2 u2if_trinkey.uf2
+          ls -al *uf2
       - name: Add Release Assets
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
