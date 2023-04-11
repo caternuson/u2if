@@ -8,20 +8,29 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install gcc-arm
-        run: |
-          wget --no-verbose https://adafruit-circuit-python.s3.amazonaws.com/gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
-          sudo tar -C /usr --strip-components=1 -xaf gcc-arm-none-eabi-10-2020-q4-major-x86_64-linux.tar.bz2
-          arm-none-eabi-gcc --version
+        uses: carlosperate/arm-none-eabi-gcc-action@v1
+        run: arm-none-eabi-gcc --version
       - name: Get pico-sdk submodule
         run: git submodule update --init --recursive
-      - name: Build firmware
+      - name: **HACK** Patch pico-sdk for crystal startup
+        run: sed -i 's/xosc_hw->startup = startup_delay;/xosc_hw->startup = startup_delay * 64;/' firmware/pico-sdk/src/rp2_common/hardware_xosc/xosc.c
+      - name: Build firmwares
         run: |
           cd firmware/source
           mkdir build
           cd build
-          cmake ..
-          make
-      - uses: actions/upload-artifact@v3
+          cmake -DBOARD=PICO .. ; make ; mv u2if.uf2 u2if_pico.uf2
+          cmake -DBOARD=FEATHER .. ; make ; mv u2if.uf2 u2if_feather.uf2
+          cmake -DBOARD=QTPY .. ; make ; mv u2if.uf2 u2if_qtpy.uf2
+          cmake -DBOARD=ITSYBITSY .. ; make ; mv u2if.uf2 u2if_itsybitsy.uf2
+          cmake -DBOARD=QT2040_TRINKEY .. ; make ; mv u2if.uf2 u2if_trinkey.uf2
+      - name: Add Release Assets
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
         with:
-          name: uf2
-          path: firmware/source/build/u2if.uf2
+          files: |
+            u2if_pico.uf2
+            u2if_feather.uf2
+            u2if_qtpy.uf2
+            u2if_itsybitsy.uf2
+            u2if_trinkey.uf2
