@@ -9,13 +9,13 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install gcc-arm
         uses: carlosperate/arm-none-eabi-gcc-action@v1
-        run: arm-none-eabi-gcc --version
       - name: Get pico-sdk submodule
         run: git submodule update --init --recursive
       - name: Patch pico-sdk for crystal startup
         run: sed -i 's/xosc_hw->startup = startup_delay;/xosc_hw->startup = startup_delay * 64;/' firmware/pico-sdk/src/rp2_common/hardware_xosc/xosc.c
       - name: Build firmwares
         run: |
+          arm-none-eabi-gcc --version
           cd firmware/source
           mkdir build
           cd build
